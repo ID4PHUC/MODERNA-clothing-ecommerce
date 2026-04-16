@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đơn mua của tôi - MODERNA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/account.css">
+    <link rel="stylesheet" href="css/navbar.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    <div class="container account-container">
+        <div class="account-sidebar">
+            <div class="sidebar-user">
+                <div class="user-letter-avatar" id="sidebar-avatar">U</div>
+                <div><strong id="sidebar-name">Tên khách hàng</strong></div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="profile.html">Tài khoản của tôi</a></li>
+                <li><a href="orders.html" class="active">Đơn mua</a></li>
+            </ul>
+        </div>
+
+        <div class="account-content" style="background: none; padding: 0;">
+            <!-- Thanh Tabs -->
+            <div class="order-tabs">
+                <div class="tab-item active" data-status="all">Tất cả</div>
+                <div class="tab-item" data-status="pending">Chờ xử lý</div>
+                <div class="tab-item" data-status="shipping">Vận chuyển</div>
+                <div class="tab-item" data-status="delivered">Hoàn thành</div>
+                <div class="tab-item" data-status="cancelled">Đã hủy</div>
+            </div>
+
+            <!-- Tìm kiếm -->
+            <div class="order-search">
+                <input type="text" placeholder="Bạn có thể tìm kiếm theo Mã đơn hàng hoặc Tên Sản phẩm">
+            </div>
+
+            <div id="order-container">
+                <p style="text-align: center; color: #64748b;">Đang tải đơn hàng...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LÝ DO TRẢ HÀNG -->
+    <div id="refundModal" class="modal-overlay" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10001; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 25px; border-radius: 12px; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative;">
+            <h3 style="margin-bottom: 15px; color: #333;">Lý do trả hàng</h3>
+            <input type="hidden" id="refundOrderId">
+            <textarea id="refundReason" rows="4" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; resize: none; font-family: inherit;" placeholder="Vui lòng cho chúng tôi biết lý do bạn muốn trả hàng..."></textarea>
+            <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
+                <button onclick="closeRefundModal()" style="padding: 8px 18px; border: 1px solid #ddd; background: #fff; cursor: pointer; border-radius: 6px; font-weight: 500;">Hủy</button>
+                <button onclick="submitRefundRequest()" style="padding: 8px 18px; border: none; background: #ef4444; color: white; cursor: pointer; border-radius: 6px; font-weight: 600;">Gửi yêu cầu</button>
+            </div>
+        </div>
+    </div>
+
+<script src="js/navbar.js"></script>
+<script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+    let allOrders = [];
+
+    if (!token || !user) { window.location.href = 'login.html'; }
+
+    // Khởi tạo Sidebar
+    const displayName = user.name || 'Khách hàng';
+    document.getElementById('sidebar-name').innerText = displayName;
+    document.getElementById('sidebar-avatar').innerText = displayName.charAt(0).toUpperCase();
+
+    const formatCurrency = (v) => (v || 0).toLocaleString('vi-VN') + '₫';
+
+    // 1. Hàm render danh sách đơn hàng
+    function renderOrders(orders) {
+        const container = document.getElementById('order-container');
+        if (orders.length === 0) {
+            container.innerHTML = '<div class="order-card" style="text-align:center; padding: 50px;">Chưa có đơn hàng nào.</div>';
+            return;
+        }
+
+        container.innerHTML = orders.map(order => {
+            const isDelivered = (order.status === 'delivered');
+
+            return `
+            <div class="order-card">
+                <div class="card-header">
+                    <span>Mã đơn: <b>#${order._id.slice(-8).toUpperCase()}</b></span>
+                    <span class="status-text">${translateStatus(order.status)}</span>
+                </div>
+                
+                <div class="card-body">
+                    ${order.items.map(item => `
+                        <div class="product-item">
+                            <img src="${item.product?.image || 'img/no-image.png'}" class="product-img">
+                            <div class="product-info">
+                                <span class="product-name">${item.product?.title || 'Sản phẩm không tồn tại'}</span>
+                                <span class="product-variant">Phân loại: ${item.size} / ${item.color}</span>
+                                <div style="margin-top:5px">x${item.quantity}</div>
+                            </div>
+                            <div style="color: #ef4444;">${formatCurrency(item.price)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="card-footer">
+                    <div>Thành tiền: <span class="total-price">${formatCurrency(order.total)}</span></div>
+                    <div class="btn-group">
+                    ${isDelivered ? `
+                        <button class="btn-action btn-primary-action" onclick="location.href='review.html?id=${order._id}'">Đánh Giá</button>
+                        <button class="btn-action" onclick="requestRefund('${order._id}')">Yêu Cầu Trả Hàng/Hoàn Tiền</button>
+                    ` : order.status === 'pending' ? `
+                        <button class="btn-action btn-primary-action" onclick="location.href='order-detail.html?id=${order._id}'">Chi tiết</button>
+                        <!-- NÚT HỦY ĐƠN CHỈ HIỆN KHI CHỜ XỬ LÝ -->
+                        <button class="btn-action" onclick="cancelOrder('${order._id}')" style="color: #ef4444; border-color: #fecaca;">Hủy Đơn</button>
+                    ` : `
+                        <button class="btn-action btn-primary-action" onclick="location.href='order-detail.html?id=${order._id}'">Chi tiết</button>
+                    `}
+                    <button class="btn-action" onclick="openContactChat('${order._id.slice(-8).toUpperCase()}')">Liên Hệ Người Bán</button>
+                </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+    }
+
+    // 2. Tải dữ liệu từ API
+    async function loadOrders() {
+        try {
+            const res = await fetch('/api/orders', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            allOrders = await res.json();
+            allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            renderOrders(allOrders);
+        } catch (err) {
+            document.getElementById('order-container').innerHTML = '<p style="text-align:center">Lỗi tải dữ liệu.</p>';
+        }
+    }
+
+    function translateStatus(status) {
+        const map = {
+            'pending': 'Chờ xử lý',
+            'confirmed': 'Đã xác nhận',
+            'shipping': 'Đang giao hàng',
+            'delivered': 'Hoàn thành',
+            'cancelled': 'Đã hủy'
+        };
+        return map[status] || 'Chờ xử lý';
+    }
+
+    // Hàm giả lập yêu cầu hoàn tiền
+    let currentRefundId = null;
+
+    window.requestRefund = function(orderId) {
+        currentRefundId = orderId;
+        document.getElementById('refundOrderId').value = orderId;
+        document.getElementById('refundModal').style.display = 'flex';
+    }
+
+    window.closeRefundModal = function() {
+        document.getElementById('refundModal').style.display = 'none';
+        document.getElementById('refundReason').value = '';
+    }
+
+    window.submitRefundRequest = async function() {
+        const reason = document.getElementById('refundReason').value.trim();
+        if(!reason) return alert("Vui lòng nhập lý do trả hàng!");
+
+        try {
+            const res = await fetch(`/api/orders/${currentRefundId}/request-refund`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token 
+                },
+                body: JSON.stringify({ refundReason: reason })
+            });
+
+            if(res.ok) {
+                alert("Đã gửi yêu cầu trả hàng. Vui lòng chờ admin duyệt!");
+                closeRefundModal();
+                loadOrders(); // Tải lại danh sách
+            }
+        } catch (err) {
+            alert("Có lỗi xảy ra, vui lòng thử lại!");
+        }
+    }
+    // xu ly huy don hang
+    window.cancelOrder = async function(orderId) {
+    if (!confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) return;
+
+    try {
+        const res = await fetch(`/api/orders/${orderId}/cancel`, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': 'Bearer ' + token 
+            }
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            alert("Đã hủy đơn hàng thành công!");
+            loadOrders(); // Tải lại danh sách đơn hàng
+        } else {
+            alert("Lỗi: " + (data.error || "Không thể hủy đơn hàng"));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Có lỗi xảy ra khi kết nối máy chủ.");
+    }
+}
+
+    // 3. Xử lý sự kiện Click Tab để lọc
+    document.querySelectorAll('.tab-item').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelector('.tab-item.active').classList.remove('active');
+            tab.classList.add('active');
+            
+            const status = tab.dataset.status;
+            if (status === 'all') {
+                renderOrders(allOrders);
+            } else {
+                const filtered = allOrders.filter(o => o.status === status);
+                renderOrders(filtered);
+            }
+        });
+    });
+
+    loadOrders();
+
+    window.openContactChat = function(orderCode) {
+    // 1. Mở khung chat
+    toggleChat();
+    
+    // 2. Tự động điền tin nhắn gợi ý vào ô nhập
+    const input = document.getElementById('user-msg');
+    if (input) {
+        input.value = `Tôi muốn hỏi về đơn hàng #${orderCode}`;
+        input.focus();
+    }
+}
+</script>
+</body>
+<script src="js/ai-chat.js"></script>
+</html>

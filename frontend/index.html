@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MODERNA - Redefine Your Style</title>
+
+  <!-- Fonts & CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navbar.css">
+
+  <!-- Scripts -->
+  <script src="js/navbar.js" defer></script>
+  <script src="js/cartCount.js" defer></script>
+  <script src="js/index.js" defer></script>
+  <script src="js/footer.js" defer></script>
+  <script src="js/ai-chat.js"></script>
+</head>
+
+<body>
+<div id="toast-container"></div>
+<!-- NAVBAR -->
+<div id="navbar-container"></div>
+
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="hero-slides">
+    <img class="hero-bg active" src="https://pub-cdn.sider.ai/u/U0VEH8859ZG/web-coder/6931ab5dd9e33362d2778ef0/resource/944c2547-9ec5-480f-b250-b43c5f80ca4a.jpg">
+    <img class="hero-bg" src="https://images.unsplash.com/photo-1521334884684-d80222895322">
+    <img class="hero-bg" src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <span class="badge">New Season 2024</span>
+    <h1>Redefine Your <br><span>Signature Style</span></h1>
+    <p>Khám phá bộ sưu tập vượt thời gian được thiết kế cho cá nhân hiện đại.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Shop Collection →</button>
+      <button class="btn-outline">Lookbook</button>
+    </div>
+  </div>
+  <button class="hero-btn prev">‹</button>
+  <button class="hero-btn next">›</button>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="container feature-grid">
+    <div class="feature">
+      <div class="icon-box"><img src="icons/truck.png" alt="Delivery"></div>
+      <h3>Giao hàng nhanh</h3>
+      <p>Miễn phí vận chuyển cho đơn hàng trên 1.500.000₫</p>
+    </div>
+    <div class="feature">
+      <div class="icon-box"><img src="icons/shield.png" alt="Secure"></div>
+      <h3>Thanh toán an toàn</h3>
+      <p>Hệ thống thanh toán bảo mật 256-bit.</p>
+    </div>
+    <div class="feature">
+      <div class="icon-box"><img src="icons/refresh.jpg" alt="Returns"></div>
+      <h3>Đổi trả dễ dàng</h3>
+      <p>Hỗ trợ đổi trả trong vòng 30 ngày.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DYNAMIC PRODUCT LISTS ================= -->
+
+<!-- 1. BỘ SƯU TẬP NAM -->
+<section class="product-list" id="section-men-shirts">
+  <div class="container">
+    <div class="section-header">
+      <h2>Bộ sưu tập Áo Nam</h2>
+      <a href="#" class="view-all-link">Xem tất cả →</a>
+    </div>
+    <div class="product-grid-list"></div>
+  </div>
+</section>
+
+<section class="product-list" id="section-men-pants">
+  <div class="container">
+    <div class="section-header">
+      <h2>Bộ sưu tập Quần Nam</h2>
+      <a href="#" class="view-all-link">Xem tất cả →</a>
+    </div>
+    <div class="product-grid-list"></div>
+  </div>
+</section>
+
+<!-- 2. BỘ SƯU TẬP NỮ -->
+<section class="product-list" id="section-women-shirts" style="background: #fcfcfc;">
+  <div class="container">
+    <div class="section-header">
+      <h2>Bộ sưu tập Áo Nữ</h2>
+      <a href="#" class="view-all-link">Xem tất cả →</a>
+    </div>
+    <div class="product-grid-list"></div>
+  </div>
+</section>
+<!--
+<section class="product-list" id="section-women-pants" style="background: #fcfcfc;">
+  <div class="container">
+    <div class="section-header">
+      <h2>Bộ sưu tập Quần Nữ</h2>
+      <a href="#" class="view-all-link">Xem tất cả →</a>
+    </div>
+    <div class="product-grid-list"></div>
+  </div>
+</section>
+-->
+<!-- FOOTER -->
+<div id="footer-container"></div>
+</body>
+</html>

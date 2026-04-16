@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ sơ của tôi - MODERNA</title>
+    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="stylesheet" href="css/account.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <script src="js/ai-chat.js"></script>
+    <style>
+        /* Style cho Toast thông báo */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; }
+        .toast { padding: 15px 25px; background: #333; color: #fff; border-radius: 4px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease-out; }
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <!-- Container cho thông báo tự động -->
+    <div id="toast-container"></div>
+
+    <div id="navbar-container"></div> 
+
+    <div class="container account-container">
+        <!-- Sidebar -->
+        <div class="account-sidebar">
+            <div class="sidebar-user">
+                <div class="user-letter-avatar" id="sidebar-avatar">U</div>
+                <div class="user-info">
+                    <strong id="sidebar-name">Đang tải...</strong>
+                    <p style="font-size: 12px; color: #888;">Sửa hồ sơ</p>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="profile.html" class="active">Tài khoản của tôi</a></li>
+                <li><a href="orders.html">Đơn mua</a></li>
+                <li><a href="#" id="sidebar-logout">Đăng xuất</a></li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="account-content">
+            <h2 class="content-title">Hồ Sơ Của Tôi</h2>
+            
+            <!-- Cảnh báo thiếu thông tin -->
+            <div id="missing-info-alert" style="display:none; background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                ⚠️ <strong>Thông tin chưa đầy đủ:</strong> Vui lòng cập nhật Số điện thoại và Địa chỉ để tiếp tục sử dụng dịch vụ.
+            </div>
+
+            <form id="profile-form">
+                <div class="form-group">
+                    <label>Họ và tên</label>
+                    <input type="text" id="p-name" class="form-control" placeholder="Nhập họ tên">
+                </div>
+                <div class="form-group">
+                    <label>Email (Không thể thay đổi)</label>
+                    <input type="email" id="p-email" class="form-control" readonly style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" id="p-phone" class="form-control" placeholder="Nhập số điện thoại" maxlength="10">
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <textarea id="p-address" class="form-control" rows="3" placeholder="Nhập địa chỉ nhận hàng"></textarea>
+                </div>
+                <button type="submit" class="btn-update" id="btn-save">Lưu thay đổi</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/navbar.js"></script>
+
+<script>
+    // --- 1. Hàm hiển thị thông báo Toast tự động ---
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerText = message;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
+    // --- 2. Khởi tạo dữ liệu ---
+    let user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+
+    if (!token || !user) {
+        window.location.href = 'login.html';
+    }
+
+    // --- 2.1 Xử lý ô nhập Số điện thoại (Chỉ cho nhập số, tối đa 10 ký tự) ---
+    const phoneInput = document.getElementById('p-phone');
+    if (phoneInput) {
+        // Đặt maxlength trực tiếp bằng code cho chắc chắn
+        phoneInput.setAttribute('maxlength', '10');
+        
+        phoneInput.oninput = function() {
+            // Loại bỏ tất cả ký tự không phải là số
+            this.value = this.value.replace(/[^0-9]/g, '');
+        };
+    }
+
+    function renderUI() {
+        document.getElementById('p-name').value = user.name || '';
+        document.getElementById('p-email').value = user.email || '';
+        document.getElementById('p-phone').value = user.phone || '';
+        document.getElementById('p-address').value = user.address || '';
+        
+        // Cập nhật Sidebar
+        const displayName = user.name || 'User';
+        document.getElementById('sidebar-name').innerText = displayName;
+        document.getElementById('sidebar-avatar').innerText = displayName.charAt(0).toUpperCase();
+
+        // Hiện/Ẩn cảnh báo
+        if (!user.phone || !user.address) {
+            document.getElementById('missing-info-alert').style.display = 'block';
+        } else {
+            document.getElementById('missing-info-alert').style.display = 'none';
+        }
+    }
+
+    renderUI();
+
+    // --- 3. Xử lý Lưu thay đổi ---
+    document.getElementById('profile-form').onsubmit = async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('p-name').value.trim();
+        const phone = document.getElementById('p-phone').value.trim();
+        const address = document.getElementById('p-address').value.trim();
+        const btnSave = document.getElementById('btn-save');
+
+        // Kiểm tra bỏ trống
+        if (!name || !phone || !address) {
+            showToast('Vui lòng nhập đầy đủ Họ tên, Số điện thoại và Địa chỉ!', 'error');
+            return;
+        }
+
+        // KIỂM TRA ĐỊNH DẠNG SĐT: Phải là 10 số, bắt đầu bằng 03, 05, 07, 08, 09
+        const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+        if (!phoneRegex.test(phone)) {
+            showToast('Số điện thoại không hợp lệ! Phải có 10 chữ số (Ví dụ: 0987xxxxxx)', 'error');
+            return;
+        }
+
+        try {
+            btnSave.innerText = 'Đang lưu...';
+            btnSave.disabled = true;
+
+            const res = await fetch('/api/auth/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ name, phone, address })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                showToast('Cập nhật hồ sơ thành công!');
+                
+                // Cập nhật lại Object user cục bộ
+                user.name = name;
+                user.phone = phone;
+                user.address = address;
+                
+                // Lưu vào LocalStorage
+                localStorage.setItem('user', JSON.stringify(user));
+                
+                // Cập nhật lại giao diện ngay lập tức
+                renderUI();
+                
+                // Nếu muốn reload lại Navbar để cập nhật tên trên menu
+                if(typeof checkSession === 'function') checkSession(); 
+
+            } else {
+                showToast(data.error || 'Có lỗi xảy ra', 'error');
+            }
+        } catch (err) {
+            showToast('Lỗi kết nối máy chủ', 'error');
+        } finally {
+            btnSave.innerText = 'Lưu thay đổi';
+            btnSave.disabled = false;
+        }
+    };
+
+    // --- 4. Đăng xuất ---
+    document.getElementById('sidebar-logout').onclick = (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sản phẩm - MODERNA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/collections.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <section class="hero">
+  <div class="hero-slides">
+    <img class="hero-bg active"
+     src="img/img1.jpg">
+
+<img class="hero-bg"
+     src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80">
+
+<img class="hero-bg"
+     src="img/img2.jpg">
+
+  </div>
+  <div class="hero-overlays"></div>
+  <button class="hero-btn prev">‹</button>
+  <button class="hero-btn next">›</button>
+</section>
+  
+<div id="navbar-container"></div>
+<script src="js/navbar.js" defer></script>
+
+
+<main class="container" style="padding:40px 0">
+  <div class="collections-layout">
+    <!-- Cột TRÁI: Danh mục -->
+    <aside class="sidebar">
+      <div id="category-sidebar-content">
+        <!-- JS sẽ render danh mục vào đây -->
+        <p>Đang tải danh mục...</p>
+      </div>
+    </aside>
+
+    <!-- Cột PHẢI: Nội dung chính -->
+    <section class="main-content">
+      <nav class="breadcrumb" id="breadcrumb"></nav>
+
+      <div style="display:flex; justify-content:flex-end; align-items:center; margin-bottom: 20px;">
+       <div class="gender-filters">
+        <label class="filter-item">
+          <input type="radio" name="genderFilter" value="" checked>
+          <span class="filter-label">Tất cả</span>
+        </label>
+       <label class="filter-item">
+          <input type="radio" name="genderFilter" value="male">
+          <span class="filter-label">Nam</span>
+        </label>
+       <label class="filter-item">
+         <input type="radio" name="genderFilter" value="female">
+         <span class="filter-label">Nữ</span>
+       </label>
+     </div>
+      </div>
+
+      <div class="product-grid-list" id="products"></div>
+    </section>
+  </div>
+</main>
+<div id="footer-container"></div>
+  <script src="js/cartCount.js" defer></script>
+  <script src="js/footer.js" defer></script>
+  <script src="js/collections.js" defer></script>
+  <script src="js/ai-chat.js"></script>
+</body>
+</html>

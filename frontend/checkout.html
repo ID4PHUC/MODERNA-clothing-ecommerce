@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thanh Toán - MODERNA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/checkout.css">
+</head>
+<body>
+
+<div id="navbar-container"></div>
+<script src="js/navbar.js" defer></script>
+
+  <main class="container" style="padding:40px 0">
+    <div style="max-width:1000px;margin:auto;display:grid;grid-template-columns:1fr 360px;gap:24px">
+      <section>
+        <h1>Thanh Toán</h1>
+        <form id="checkoutForm" class="card">
+          <h2>Thông Tin Giao Hàng</h2>
+          <div class="stack">
+            <input type="text" id="custName" placeholder="Họ và tên" required />
+            <input type="text" id="custPhone" placeholder="Số điện thoại" required maxlength="10" />
+            <input type="email" id="custEmail" placeholder="Email" />
+            <input type="text" id="custAddress" placeholder="Địa chỉ" required />
+          </div>
+
+          <h2 style="margin-top:20px">Phương Thức Thanh Toán</h2>
+          <div class="payment-methods">
+            <label class="payment-item">
+              <input type="radio" name="paymentMethod" value="cod" checked>
+              <span>Thanh toán khi nhận hàng (COD)</span>
+            </label>
+        
+            <label class="payment-item">
+              <input type="radio" name="paymentMethod" value="vnpay">
+              <span>Thanh toán qua VNPay</span>
+            </label>
+        
+            <label class="payment-item">
+              <input type="radio" name="paymentMethod" value="momo">
+              <span>Thanh toán qua Momo</span>
+            </label>
+          </div>
+        </form>
+      </section>
+
+      <aside class="card">
+        <h2>Đơn Hàng Của Bạn</h2>
+        <div id="orderItems"></div>
+        <div class="summary-line"><span>Tạm tính</span><span id="subtotal">0₫</span></div>
+        <div class="summary-line"><span>Phí ship</span><span class="ship-free">Miễn phí</span></div>
+        <hr />
+        <div class="summary-total"><span>Tổng tiền</span><span id="total">0₫</span></div>
+        <button id="completeOrderBtn" class="btn-primary" style="margin-top:12px; width: 100%;">Hoàn tất đơn hàng</button>
+      </aside>
+    </div>
+  </main>
+
+<div id="footer-container"></div>
+  <script src="js/index.js" defer></script>
+  <script src="js/checkout.js" defer></script>
+  <script src="js/footer.js" defer></script>
+  <script src="js/ai-chat.js"></script>
+</body>
+</html>

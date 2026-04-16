@@ -1,0 +1,118 @@
+/* ===== AUTH PAGE (SIGNUP / LOGIN) ===== *
+
+/* Form */
+#signupForm {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Inputs */
+#signupForm input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+#signupForm input::placeholder {
+  color: #9ca3af;
+}
+
+#signupForm input:focus {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15,23,42,0.08);
+}
+
+/* Submit button */
+#signupForm .btn-primary {
+  margin-top: 6px;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#signupForm .btn-primary:hover {
+  background: #020617;
+  box-shadow: 0 10px 25px rgba(15,23,42,0.25);
+}
+
+#signupForm .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Footer text */
+.container p {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #475569;
+}
+
+.container p a {
+  color: #0f172a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.container p a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile optimization */
+@media (max-width: 480px) {
+  .container h1 {
+    font-size: 24px;
+  }
+}
+
+/* Container chứa các thông báo */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+}
+
+/* Giao diện chung của thẻ thông báo */
+.toast {
+    min-width: 280px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    color: white;
+    font-family: sans-serif;
+    font-weight: 500;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: slideIn 0.4s ease forwards;
+    transition: all 0.4s ease;
+}
+
+.toast.success { background-color: #27ae60; } /* Màu xanh thành công */
+.toast.error { background-color: #e74c3c; }   /* Màu đỏ lỗi */
+
+/* Hiệu ứng trượt từ phải vào */
+@keyframes slideIn {
+    from { transform: translateX(110%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Hiệu ứng mờ dần khi ẩn */
+.toast.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+}

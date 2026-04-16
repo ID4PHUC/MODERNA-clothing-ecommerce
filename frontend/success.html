@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán thành công - MODERNA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .success-card {
+            max-width: 500px; margin: 80px auto; text-align: center;
+            padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: white; font-family: 'DM Sans', sans-serif;
+        }
+        .icon { font-size: 60px; color: #22c55e; margin-bottom: 20px; }
+        h1 { color: #111827; margin-bottom: 10px; }
+        p { color: #64748b; margin-bottom: 30px; }
+        .btn-home {
+            background: #111827; color: white; padding: 12px 30px;
+            text-decoration: none; border-radius: 10px; font-weight: 500;
+        }
+    </style>
+</head>
+<body style="background-color: #f8fafc;">
+    <div class="success-card">
+        <div class="icon">Check!</div> <!-- Bạn có thể thay bằng icon SVG -->
+        <h1 id="status-title">Đang kiểm tra...</h1>
+        <p id="status-message">Vui lòng chờ trong giây lát.</p>
+        <div id="order-info" style="margin-bottom: 20px; font-weight: bold; color: #111827;"></div>
+        <a href="index.html" class="btn-home">Quay lại trang chủ</a>
+    </div>
+
+<script>
+    // Hàm gọi API xóa giỏ hàng trên Server
+    async function clearServerCart() {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        try {
+            await fetch('/api/cart/clear', {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            console.log("Server cart cleared!");
+        } catch (err) {
+            console.error("Failed to clear server cart", err);
+        }
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const vnpResponseCode = params.get('vnp_ResponseCode');
+    const momoResultCode = params.get('resultCode');
+
+    const title = document.getElementById('status-title');
+    const msg = document.getElementById('status-message');
+
+    // Kiểm tra nếu thành công
+    if (vnpResponseCode === '00' || momoResultCode === '0') {
+        title.innerText = "Thanh toán thành công!";
+        title.style.color = "#22c55e";
+        msg.innerText = "Cảm ơn bạn đã mua sắm. Giỏ hàng của bạn đang được dọn dẹp...";
+
+        // THỰC HIỆN XÓA GIỎ HÀNG
+        localStorage.removeItem('cart'); // Xóa giỏ hàng local (nếu có)
+        clearServerCart(); // Gọi API xóa giỏ hàng trong Database
+        
+    } else {
+        title.innerText = "Thanh toán thất bại!";
+        title.style.color = "#ef4444";
+        msg.innerText = "Đã có lỗi xảy ra hoặc bạn đã hủy giao dịch.";
+    }
+</script>
+</body>
+</html>

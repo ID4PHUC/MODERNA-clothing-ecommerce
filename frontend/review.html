@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đánh giá sản phẩm - MODERNA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <script src="js/ai-chat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background: #f9f9f9; }
+        .review-container { max-width: 700px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .product-to-review { display: flex; gap: 15px; padding-bottom: 20px; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+        .product-img { width: 70px; height: 90px; object-fit: cover; border-radius: 4px; }
+        
+        /* Star Rating Style */
+        .star-rating { display: flex; gap: 10px; margin: 15px 0; }
+        .star-rating i { font-size: 28px; color: #ddd; cursor: pointer; transition: 0.2s; }
+        .star-rating i.active { color: #f59e0b; }
+        
+        textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; resize: none; margin-top: 10px; }
+        .btn-submit { background: #ee4d2d; color: #fff; border: none; padding: 12px 40px; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 20px; }
+        .btn-submit:disabled { background: #ccc; }
+    </style>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <div class="container">
+        <div class="review-container">
+            <h2 style="margin-bottom: 20px;">Đánh giá sản phẩm</h2>
+            <div id="review-list">
+                <p style="text-align: center;">Đang tải thông tin đơn hàng...</p>
+            </div>
+            <button class="btn-submit" id="submit-all-reviews">Gửi đánh giá</button>
+        </div>
+    </div>
+
+<script src="js/navbar.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('id');
+    const token = localStorage.getItem('token');
+
+    if (!orderId || !token) location.href = 'orders.html';
+
+    async function loadOrder() {
+        try {
+            const res = await fetch(`/api/orders/${orderId}`, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            const order = await res.json();
+
+            if (order.status !== 'delivered') {
+                alert('Bạn chỉ có thể đánh giá đơn hàng đã hoàn thành.');
+                location.href = 'orders.html';
+                return;
+            }
+
+            renderReviewForm(order.items);
+        } catch (err) { console.error(err); }
+    }
+
+    function renderReviewForm(items) {
+        const container = document.getElementById('review-list');
+        container.innerHTML = items.map((it, index) => `
+            <div class="review-item" data-product-id="${it.product._id}">
+                <div class="product-to-review">
+                    <img src="${it.product.image}" class="product-img">
+                    <div>
+                        <div style="font-weight: 600;">${it.product.title}</div>
+                        <div style="color: #888; font-size: 13px;">Phân loại: ${it.size} / ${it.color}</div>
+                    </div>
+                </div>
+                
+                <div style="font-weight: 500;">Chất lượng sản phẩm</div>
+                <div class="star-rating" data-rating="5">
+                    <i class="fa-solid fa-star active" data-value="1"></i>
+                    <i class="fa-solid fa-star active" data-value="2"></i>
+                    <i class="fa-solid fa-star active" data-value="3"></i>
+                    <i class="fa-solid fa-star active" data-value="4"></i>
+                    <i class="fa-solid fa-star active" data-value="5"></i>
+                </div>
+                
+                <textarea rows="4" placeholder="Hãy chia sẻ nhận xét của bạn về sản phẩm này nhé!"></textarea>
+                <hr style="margin: 30px 0; border: 0; border-top: 1px dashed #eee;">
+            </div>
+        `).join('');
+
+        // Gán sự kiện chọn sao
+        document.querySelectorAll('.star-rating i').forEach(star => {
+            star.onclick = function() {
+                const value = parseInt(this.dataset.value);
+                const parent = this.parentElement;
+                parent.dataset.rating = value;
+
+                const allStars = parent.querySelectorAll('i');
+                allStars.forEach((s, i) => {
+                    if (i < value) s.classList.add('active');
+                    else s.classList.remove('active');
+                });
+            };
+        });
+    }
+
+    // XỬ LÝ GỬI ĐÁNH GIÁ (ĐÃ SỬA LỖI LẤY DỮ LIỆU)
+    document.getElementById('submit-all-reviews').onclick = async function() {
+        const btn = this;
+        const reviewItems = document.querySelectorAll('.review-item');
+        const dataToSubmit = [];
+
+        // --- BƯỚC QUAN TRỌNG: LẤY DỮ LIỆU TỪ GIAO DIỆN BỎ VÀO MẢNG ---
+        reviewItems.forEach(item => {
+            const productId = item.getAttribute('data-product-id');
+            const rating = item.querySelector('.star-rating').getAttribute('data-rating');
+            const comment = item.querySelector('textarea').value;
+
+            dataToSubmit.push({
+                productId: productId,
+                rating: rating,
+                comment: comment
+            });
+        });
+
+        if (dataToSubmit.length === 0) {
+            alert("Không tìm thấy sản phẩm để đánh giá.");
+            return;
+        }
+
+        try {
+            btn.disabled = true;
+            btn.innerText = 'Đang gửi...';
+
+            for (const review of dataToSubmit) {
+                const res = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token 
+                    },
+                    body: JSON.stringify({
+                        product: review.productId,
+                        rating: review.rating,
+                        comment: review.comment
+                    })
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Lỗi khi gửi đánh giá');
+                }
+            }
+
+            alert('Cảm ơn bạn đã đánh giá sản phẩm!');
+            location.href = 'orders.html';
+
+        } catch (err) {
+            alert('Lỗi: ' + err.message);
+            btn.disabled = false;
+            btn.innerText = 'Gửi đánh giá';
+        }
+    };
+
+    loadOrder();
+</script>
+</body>
+</html>

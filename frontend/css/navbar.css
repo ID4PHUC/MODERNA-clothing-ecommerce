@@ -1,0 +1,246 @@
+/* ================= NAV ITEM ================= */
+.nav-item {
+  position: relative;
+}
+
+/* Link SALE / MEN / WOMEN */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #0f172a;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Arrow */
+.nav-link::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.25s ease;
+  margin-top: -2px;
+}
+
+/* Hover arrow */
+.nav-item:hover .nav-link::after {
+  transform: rotate(-135deg);
+}
+
+/* ================= MEGA MENU ================= */
+.mega-menu {
+  position: absolute;
+  top: 100%;              /* BẮT BUỘC: không dùng calc */
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+
+  width: 900px;
+  max-width: 95vw;
+
+  background: #fff;
+  border-radius: 16px;
+  padding: 36px 32px;
+
+  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 150; /* thấp hơn navbar */
+}
+
+/* Hover hiển thị */
+.nav-item:hover .mega-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ================= GRID ================= */
+.mega-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+/* Nếu có banner */
+.container.mega-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding: 0;
+}
+
+/* ================= COLUMN ================= */
+.mega-col h4 {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 18px;
+  position: relative;
+  text-transform: uppercase;
+  color: #0f172a;
+}
+
+/* Gạch xanh */
+.mega-col h4::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 32px;
+  height: 3px;
+  background: #4f46e5;
+  border-radius: 2px;
+}
+
+/* ================= LIST ================= */
+.mega-col ul {
+  list-style: none;
+  margin-top: 24px;
+  padding: 0;
+}
+
+.mega-col li {
+  margin-bottom: 12px;
+}
+
+.mega-col a {
+  font-size: 15px;
+  color: #64748b;
+  display: inline-block;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.mega-col a:hover {
+  color: #4f46e5;
+  transform: translateX(6px);
+}
+
+/* Container chung */
+.user-dropdown-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+/* Phần hiển thị bên ngoài: Avatar + Tên */
+.user-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+.user-name {
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Menu ẩn mặc định */
+.user-menu {
+    position: absolute;
+    top: 100%; /* Sát ngay dưới phần tên */
+    right: 0;
+    width: 200px;
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    padding: 8px 0;
+    display: none;
+    z-index: 9999;
+    
+    /* QUAN TRỌNG: Tạo một vùng đệm vô hình phía trên để không bị mất hover */
+    margin-top: 0; 
+}
+/* Mũi tên nhọn phía trên */
+.menu-arrow {
+  position: absolute;
+  top: -8px;
+  right: 15px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #fff;
+}
+
+/* Hover vào thì hiện menu */
+.user-dropdown-container:hover .user-menu {
+  display: block;
+}
+
+/* Các mục trong menu */
+.menu-item {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.menu-item:hover {
+  background: #f5f5f5;
+}
+
+.link-admin {
+  color: #4a6cf7 !important; /* Màu xanh Admin */
+  font-weight: bold;
+}
+
+.link-logout {
+  color: #ff4d4d !important; /* Màu đỏ Logout */
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 5px 0;
+}
+
+/* Avatar hình tròn chứa chữ cái */
+.user-letter-avatar {
+  width: 35px;
+  height: 35px;
+  background-color: #4f46e5; /* Màu tím xanh giống theme của bạn */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  text-transform: uppercase;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Hiệu ứng hover cho toàn bộ trigger */
+.user-trigger:hover .user-letter-avatar {
+  background-color: #4338ca;
+  transform: scale(1.05);
+  transition: 0.2s;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-left: 8px;
+}

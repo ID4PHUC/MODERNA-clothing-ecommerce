@@ -1,0 +1,114 @@
+#loginForm {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Inputs */
+#loginForm input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+#loginForm input::placeholder {
+  color: #9ca3af;
+}
+
+#loginForm input:focus {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15,23,42,0.08);
+}
+
+/* Submit button */
+#loginForm .btn-primary {
+  margin-top: 6px;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#loginForm .btn-primary:hover {
+  background: #020617;
+  box-shadow: 0 10px 25px rgba(15,23,42,0.25);
+}
+
+#loginForm .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Footer text */
+.container p {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #475569;
+}
+
+.container p a {
+  color: #0f172a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.container p a:hover {
+  text-decoration: underline;
+}
+
+/* ===== PASSWORD TOGGLE ===== */
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password:hover {
+  color: #0f172a;
+}
+
+.icon-eye {
+  width: 20px;
+  height: 20px;
+}
+
+.eye-closed {
+  display: none;
+}
+
+
+/* Mobile */
+@media (max-width: 480px) {
+  .container h1 {
+    font-size: 24px;
+  }
+}

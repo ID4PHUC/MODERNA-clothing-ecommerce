@@ -1,0 +1,16 @@
+# .gitignore
+# Bỏ qua các thư mục thư viện (cho cả backend và frontend)
+node_modules/
+
+# Bỏ qua các file cấu hình bí mật
+.env
+backend/.env
+frontend/.env
+
+# Bỏ qua các file rác của hệ điều hành
+.DS_Store
+Thumbs.db
+
+
+# Bỏ qua các file build
+dist/

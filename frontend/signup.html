@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng ký - MODERNA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/signup.css">
+</head>
+<body>
+
+  <main class="container" style="max-width:480px;padding:40px 0">
+    <h1>Đăng ký</h1>
+    <form id="signupForm" style="display:flex;flex-direction:column;gap:12px;margin-top:18px">
+      <input type="text" id="name" placeholder="Họ và tên" />
+      <input type="email" id="email" placeholder="Email" required />
+  <!-- BẮT ĐẦU HONEYPOT: Đặt tên nghe có vẻ quan trọng như "phone" hoặc "address" để lừa Bot -->
+    <div style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1;">
+     <input type="text" id="address_field" name="address_field" tabindex="-1" autocomplete="off" placeholder="Địa chỉ của bạn">
+    </div>
+  <!-- KẾT THÚC HONEYPOT -->
+      <input type="password" id="password" placeholder="Mật khẩu" required />
+
+  <!-- PHẦN CAPTCHA PHÉP TÍNH -->
+    <div style="background: #f0f0f0; padding: 10px; border-radius: 5px; display: flex; align-items: center; gap: 10px;">
+      <span id="math-question" style="font-weight: bold; color: #333;"></span>
+      <input type="text" id="math-answer" placeholder="Nhập kết quả?" style="width: 150px; margin-top: 0;" required />
+    </div>
+  <!-- PHẦN ket yyyhjthuc CAPTCHA PHÉP TÍNH -->
+      <button type="submit" class="btn-primary">Tạo tài khoản</button>
+    </form>
+    <p style="margin-top:12px">Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
+  </main>
+  <script src="js/auth.js" defer></script>
+</body>
+</html>

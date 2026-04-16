@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tuyết rơi</title>
+  <style>
+    /* Reset cơ bản */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #001d3d, #003366); /* nền xanh đậm mùa đông */
+      color: #fff;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    /* Snowflake */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: 9999;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10px) translateX(0); }
+      100% { transform: translateY(110vh) translateX(50px); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Mùa đông đang đến… Tuyết rơi!</h1>
+
+<script>
+  const numFlakes = 100; // số lượng tuyết
+  for (let i = 0; i < numFlakes; i++) {
+    const flake = document.createElement('div');
+    flake.classList.add('snowflake');
+
+    // Kích thước tuyết ngẫu nhiên
+    const size = Math.random() * 5 + 2; // 2px -> 7px
+    flake.style.width = `${size}px`;
+    flake.style.height = `${size}px`;
+
+    // Vị trí ngang ngẫu nhiên
+    flake.style.left = `${Math.random() * window.innerWidth}px`;
+
+    // Tốc độ rơi ngẫu nhiên
+    const duration = Math.random() * 10 + 5; // 5s -> 15s
+    flake.style.animationDuration = `${duration}s`;
+
+    // Delay ngẫu nhiên để rơi liên tục
+    flake.style.animationDelay = `${Math.random() * 10}s`;
+
+    document.body.appendChild(flake);
+  }
+</script>
+
+</body>
+</html>

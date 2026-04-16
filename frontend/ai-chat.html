@@ -1,0 +1,34 @@
+
+<!-- Chat Box UI 
+<div id="ai-chat-wrapper">
+    <div id="chat-box" style="display:none;">
+        <div id="chat-header">Trợ lý AI Moderna <span onclick="toggleChat()">✖</span></div>
+        <div id="chat-content"></div>
+        <div id="chat-input-area">
+            <input type="text" id="user-msg" placeholder="Hỏi AI gì đó...">
+            <button onclick="sendMsg()">Gửi</button>
+        </div>
+    </div>
+    <button id="chat-trigger" onclick="toggleChat()">💬 Trò chuyện</button>
+</div>
+-->
+  <!-- Chat Box UI -->
+<div id="ai-chat-wrapper">
+    <div id="chat-box" style="display:none; position: fixed; bottom: 80px; right: 20px; z-index: 9999; background: white; width: 320px; height: 450px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); border-radius: 12px; flex-direction: column;">
+        <div id="chat-header" style="background: #000; color: #fff; padding: 12px; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 600;">Trợ lý AI Moderna</span>
+            <span onclick="toggleChat()" style="cursor:pointer; font-size: 20px;">&times;</span>
+        </div>
+        <div id="chat-content" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+            <!-- Tin nhắn sẽ hiện ở đây -->
+        </div>
+        <div id="chat-input-area" style="padding: 10px; border-top: 1px solid #eee; display: flex; gap: 5px;">
+            <input type="text" id="user-msg" placeholder="Hỏi AI gì đó..." style="flex: 1; border: 1px solid #ddd; padding: 8px; border-radius: 6px; outline: none;">
+            <button onclick="sendMsg()" style="background: #000; color: #fff; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: 600;">Gửi</button>
+        </div>
+    </div>
+    <!-- Nút kích hoạt chat mặc định (ẩn đi nếu bạn chỉ muốn mở qua nút liên hệ) -->
+    <button id="chat-trigger" onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; z-index: 9998; background: #000; color: #fff; border: none; padding: 12px 20px; border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+        💬 Trò chuyện
+    </button>
+</div>

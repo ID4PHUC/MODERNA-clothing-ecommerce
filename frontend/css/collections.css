@@ -1,0 +1,236 @@
+.add-cart {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%) translateY(6px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #040405; /* sửa ở đây */
+
+  background: rgba(255, 255, 255, 0.95);
+  color: #0f172a;
+
+  font-size: 15px;
+  font-weight: 400;
+
+  opacity: 0;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+
+  transition: opacity 0.25s ease, transform 0.25s ease,
+              background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.product-thumb:hover .add-cart {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.add-cart:hover {
+  background: black;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+}
+
+.add-cart .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.hero-overlays {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(255, 255, 255, 0.45) 30%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.05) 65%,
+    transparent 75%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb {
+  font-size: 17px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.breadcrumb a {
+  color: #64748b;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: #0f172a;
+}
+
+.breadcrumb span {
+  margin: 0 6px;
+}
+
+
+.collections-layout {
+  display: flex;
+  gap: 40px;
+}
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex-grow: 1;
+}
+
+/* Style cho khối danh mục */
+.category-block {
+  margin-bottom: 30px;
+}
+
+.category-title {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1a202c;
+  margin-bottom: 15px;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+/* Đường gạch chân màu tím */
+.category-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;
+  height: 3px;
+  background-color: #6366f1; /* Màu tím */
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-list li {
+  margin-bottom: 12px;
+}
+
+.category-list li a {
+  text-decoration: none;
+  color: #4b5563;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.category-list li a:hover {
+  color: #6366f1;
+}
+
+.category-list li a.view-all {
+  margin-top: 5px;
+  display: block;
+  font-weight: 500;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .collections-layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+  }
+}
+
+.gender-filters {
+  display: flex;
+  gap: 12px;
+}
+
+.filter-item {
+  cursor: pointer;
+}
+
+.filter-item input {
+  display: none; /* Ẩn nút tròn mặc định */
+}
+
+.filter-label {
+  display: inline-block;
+  padding: 8px 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 14px;
+  transition: all 0.2s;
+  color: #64748b;
+  background: white;
+}
+
+/* Khi được tích chọn */
+.filter-item input:checked + .filter-label {
+  background-color: #000; /* Hoặc màu tím #6366f1 tùy bạn */
+  color: #fff;
+  border-color: #000;
+  font-weight: 600;
+}
+
+.filter-label:hover {
+  border-color: #94a3b8;
+}
+
+/* Màu vàng cho sao đánh giá */
+.product-rating-home i.fa-star {
+    color: #f59e0b !important; /* Màu vàng cam */
+    margin-right: 2px;
+    font-size: 12px;
+}
+
+/* Màu xám cho sao rỗng */
+.product-rating-home i.fa-regular.fa-star {
+    color: #cbd5e1 !important;
+}
+
+.product-rating-home {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+}
+
+/* Khung chứa ảnh */
+.product-img {
+    width: 100%;
+    aspect-ratio: 3 / 4; /* Tỉ lệ chuẩn của shop thời trang (chiều dọc dài hơn chiều ngang) */
+    overflow: hidden;
+    background-color: #f3f4f6; /* Nền xám nhẹ nếu ảnh chưa load xong */
+    border-radius: 12px;
+    position: relative;
+}
+
+/* Ảnh bên trong */
+.product-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ép ảnh lấp đầy khung mà không bị méo (giống avatar Facebook) */
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+/* Hiệu ứng phóng nhẹ khi hover*/
+.product-card:hover .product-img img {
+    transform: scale(1.05);
+}

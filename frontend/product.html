@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết sản phẩm - MODERNA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <style>
+        .breadcrumb { margin-bottom: 20px; font-size: 14px; color: #64748b; }
+        .breadcrumb a { text-decoration: none; color: inherit; transition: 0.2s; }
+        .breadcrumb a:hover { color: #111; }
+        
+        .thumb-img {
+            width: 80px; height: 80px; object-fit: cover; 
+            border-radius: 8px; cursor: pointer; 
+            border: 2px solid transparent; opacity: 0.6; transition: 0.3s;
+        }
+        .thumb-img.active { border-color: #111; opacity: 1; }
+        .image-gallery { display: flex; flex-direction: column; gap: 15px; }
+    </style>
+</head>
+<body>
+<div id="toast-container"></div> 
+<div id="navbar-container"></div>
+
+<main class="container" style="padding:40px 0">
+    <nav class="breadcrumb" id="breadcrumb"></nav>
+
+    <div class="product-grid" style="display:grid; grid-template-columns: 1fr 360px; gap:32px">
+        <div class="image-gallery">
+            <img id="mainImage" style="width:100%; border-radius:12px; max-height:640px; object-fit:cover; display: block;"/>
+            <div id="thumbnailContainer" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
+        </div>
+
+        <aside>
+            <h1 id="title" class="product-title"></h1>
+            <div class="product-price"><span id="price" class="price-current">0đ</span></div>
+            <p id="desc" style="color:#475569; margin:14px 0"></p>
+            
+            <div class="product-promotions-tet">
+                <h4>Ưu đãi Ngày Tết</h4>
+                <ul>
+                    <li>Giảm 20% cho đơn hàng từ 500.000₫</li>
+                    <li>Miễn phí vận chuyển trong dịp Tết</li>
+                    <li>Tặng quà Tết cho 100 khách hàng đầu tiên</li>
+                </ul>
+            </div>
+
+            <div class="product-variants" style="margin: 20px 0;">
+                <div id="sizeSection" style="margin-bottom: 15px; display: none;">
+                    <label style="font-weight: bold;">Size</label>
+                    <div id="sizeContainer" style="display:flex; gap:8px; margin-top:8px;"></div>
+                </div>
+                <div id="colorSection" style="margin-bottom: 15px; display: none;">
+                    <label style="font-weight: bold;">Màu sắc</label>
+                    <div id="colorContainer" style="display:flex; gap:8px; margin-top:8px;"></div>
+                </div>
+            </div>
+
+            <div class="qty-container">
+                <button class="qty-decrease">-</button>
+                <input type="text" class="qty-input" value="1" min="1">
+                <button class="qty-increase">+</button>
+            </div>
+
+            <div style="margin:12px 0; display:flex; gap:8px">
+                <button id="addToCart" class="btn-primary">Thêm vào giỏ</button>
+                <button id="buyNow" class="btn-outline">Mua ngay</button>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<!-- Danh gia  san pham  </section> -->
+<section class="product-reviews container" style="margin: 60px auto; max-width: 1000px;">
+    <h2 style="font-size:24px; text-align:center; margin-bottom: 30px;">Đánh giá từ khách hàng</h2>
+    
+    <!-- Tóm tắt đánh giá -->
+    <div id="review-summary" style="text-align: center; margin-bottom: 40px; padding: 20px; background: #fff; border-radius: 12px;">
+        <div style="font-size: 48px; font-weight: bold; color: #f59e0b;" id="avg-rating">0</div>
+        <div id="avg-stars" style="font-size: 20px; color: #f59e0b; margin: 10px 0;"></div>
+        <div style="color: #64748b;" id="total-reviews">0 đánh giá</div>
+    </div>
+
+    <!-- Danh sách đánh giá -->
+    <div id="reviews-list" style="display: flex; flex-direction: column; gap: 20px;">
+        <p style="text-align: center; color: #64748b;">Đang tải đánh giá...</p>
+    </div>
+
+    <!-- Thêm nút Xem thêm ở đây -->
+    <div id="load-more-reviews-container" style="text-align: center; margin-top: 20px; display: none;">
+        <button id="btn-load-more-reviews" class="btn-outline" style="padding: 10px 30px;">
+            Xem thêm đánh giá <i class="fa-solid fa-chevron-down" style="margin-left: 5px; font-size: 12px;"></i>
+        </button>
+    </div>
+</section>
+
+<section class="related-products" style="margin:60px auto; max-width:1000px; position:relative;">
+    <h2 style="font-size:24px; text-align:center;">Có Thể Bạn Quan Tâm</h2>
+    <div class="related-grid" id="relatedProducts"></div>
+    
+    <!-- Nút xem tất cả -->
+    <div style="text-align: center; margin-top: 30px;">
+        <a id="viewAllRelated" href="collections.html" class="btn-outline" 
+           style="display: inline-block; padding: 10px 40px; text-decoration: none; border-radius: 4px;">
+           Xem tất cả
+        </a>
+    </div>
+</section>
+
+<div id="footer-container"></div>
+
+<!-- NHÚNG SCRIPT 1 LẦN DUY NHẤT Ở CUỐI TRANG -->
+<script src="js/navbar.js" defer></script>
+<script src="js/footer.js" defer></script>
+<script src="js/cartCount.js" defer></script>
+<script src="js/products.js" defer></script>
+<script src="js/ai-chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng nhập - MODERNA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <main class="container" style="max-width:420px;padding:40px 0">
+    <h1>Đăng nhập</h1>
+    <form id="loginForm" style="display:flex;flex-direction:column;gap:12px;margin-top:18px">
+      <input type="email" id="email" placeholder="Email" required />
+      <div class="password-field">
+  <input type="password" id="password" placeholder="Mật khẩu" required />
+
+  <button type="button" class="toggle-password" aria-label="Hiện mật khẩu">
+    <!-- Eye (show) -->
+    <svg class="icon-eye eye-open" viewBox="0 0 24 24" fill="none"
+         xmlns="http://www.w3.org/2000/svg">
+      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"
+            stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="12" cy="12" r="3"
+              stroke="currentColor" stroke-width="1.5"/>
+    </svg>
+
+    <!-- Eye off (hide) -->
+    <svg class="icon-eye eye-closed" viewBox="0 0 24 24" fill="none"
+         xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 3l18 18" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10.6 10.6a2 2 0 002.8 2.8"
+            stroke="currentColor" stroke-width="1.5"/>
+      <path d="M1 12s4-7 11-7c2.2 0 4.1.6 5.7 1.5M23 12s-4 7-11 7c-2.2 0-4.1-.6-5.7-1.5"
+            stroke="currentColor" stroke-width="1.5"/>
+    </svg>
+  </button>
+</div>
+<!-- Quen mk -->
+<div style="text-align: right; margin-top: -8px;">
+    <a href="forgot-password.html" style="font-size: 0.85em; color: #666; text-decoration: none;">Quên mật khẩu?</a>
+</div>
+
+      <button type="submit" class="btn-primary">Đăng nhập</button>
+    </form>
+    <p style="margin-top:12px">Chưa có tài khoản? <a href="signup.html">Đăng ký</a></p>
+  </main>
+  
+  <script src="js/auth.js" defer></script>
+  <script src="js/index.js" defer></script>
+</body>
+</html>
