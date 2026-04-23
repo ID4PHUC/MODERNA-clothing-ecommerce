@@ -13,15 +13,15 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "backend/server.js"
+      "destination": "/backend/server.js"
     },
     {
       "source": "/uploads/(.*)",
-      "destination": "backend/uploads/$1"
+      "destination": "/backend/uploads/$1"
     },
     {
       "source": "/(.*)",
-      "destination": "frontend/$1"
+      "destination": "/frontend/$1"
     }
   ]
 }
