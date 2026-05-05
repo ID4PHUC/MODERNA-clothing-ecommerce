@@ -1,18 +1,30 @@
 const router = require('express').Router();
 const productController = require('../controllers/productController');
 const { authMiddleware, adminOnly } = require('../middleware/authMiddleware');
-const upload = require('../middleware/upload');
+//const upload = require('../middleware/upload');
+const uploadCloud = require('../middleware/cloudinary');
 
 // Public
 router.get('/', productController.getProducts);
 router.get('/:id', productController.getProductById);
 
-// Admin - Thêm sản phẩm (Dùng upload.array thay vì single)
+// Admin - Thêm sản phẩm
 router.post(
   '/',
   authMiddleware,
   adminOnly,
-  upload.array('images', 10), // Tên field phải khớp với frontend gửi lên
+  (req, res, next) => {
+    // Gọi middleware uploadCloud
+    uploadCloud.array('images', 10)(req, res, function (err) {
+      if (err) {
+        // NẾU CÓ LỖI Ở ĐÂY, NÓ SẼ HIỆN RA TERMINAL CỦA ÔNG
+        console.error('🔥 LỖI UPLOAD CLOUDINARY/MULTER:', err);
+        return res.status(500).json({ error: 'Lỗi upload ảnh: ' + err.message });
+      }
+      // Nếu không lỗi thì mới chạy vào Controller
+      next();
+    });
+  },
   productController.addProduct
 );
 
@@ -21,7 +33,8 @@ router.put(
   '/:id',
   authMiddleware,
   adminOnly,
-  upload.array('images', 10),
+  //upload.array('images', 10),
+  uploadCloud.array('images', 10), // Sử dụng middleware Cloudinary
   productController.updateProduct
 );
 

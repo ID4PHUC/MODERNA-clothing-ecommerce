@@ -4,6 +4,15 @@ const nextBtn = document.querySelector('.hero-btn.next');
 const prevBtn = document.querySelector('.hero-btn.prev');
 let slideIndex = 0;
 
+/* ================= IMAGE UTILS (Xử lý link ảnh) ================= */
+function getImageUrl(path) {
+    if (!path) return 'https://via.placeholder.com/400x500?text=No+Image';
+    // Nếu là link Cloudinary (bắt đầu bằng http) thì dùng luôn
+    if (path.startsWith('http')) return path;
+    // Nếu là link cũ (/uploads/...) thì trả về nguyên bản
+    return path;
+}
+
 function showSlide(index) {
   if (!slides.length) return;
   slides.forEach(s => s.classList.remove('active'));
@@ -118,7 +127,8 @@ async function renderHomeSection(rootName, gender, sectionId) {
     <div class="product-card">
       <div class="product-thumb">
         <a href="product.html?id=${p._id}">
-          <img src="${p.image}" alt="${p.title}" loading="lazy">
+        <!--<img src="${p.image}" alt="${p.title}" loading="lazy">-->
+          <img src="${getImageUrl(p.image)}" alt="${p.title}" loading="lazy">
         </a>
         
         ${hasDiscount ? `<span class="discount-badge">Giảm giá ${p.discount}%</span>` : ''}

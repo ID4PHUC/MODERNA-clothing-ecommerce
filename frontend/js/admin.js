@@ -258,10 +258,11 @@ document.addEventListener('DOMContentLoaded', () => {
     btnShowAdd?.addEventListener('click', openAddProductForm);
     [btnCancel, btnCloseX, btnCancelCat, btnCloseCatX].forEach(btn => btn?.addEventListener('click', closeAllModals));
 
+    window.openEditProductForm = openEditProductForm;   // Đưa hàm này ra global để có thể gọi từ file products.js khi nhấn nút Sửa trên từng dòng sản phẩm 
     // =========================================================================
     // 6. SUBMIT DỮ LIỆU SẢN PHẨM
     // =========================================================================
-
+/*
     addForm?.addEventListener('submit', async e => {
         e.preventDefault();
         const id = addForm.dataset.editId;
@@ -307,6 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) { console.error('Lỗi submit:', err); }
     });
+*/
+// =========================================================================
 
     // =========================================================================
     // 7. QUẢN LÝ DANH MỤC & KHỞI CHẠY
@@ -425,3 +428,4 @@ async function loadAiChatHistory() {
     }
 }
 
+window.openEditProductForm = openEditProductForm;
