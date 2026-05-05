@@ -428,4 +428,4 @@ async function loadAiChatHistory() {
     }
 }
 
-window.openEditProductForm = openEditProductForm;
+//window.openEditProductForm = openEditProductForm;

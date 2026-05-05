@@ -1,44 +1,49 @@
 const router = require('express').Router();
 const productController = require('../controllers/productController');
 const { authMiddleware, adminOnly } = require('../middleware/authMiddleware');
-//const upload = require('../middleware/upload');
 const uploadCloud = require('../middleware/cloudinary');
 
-// Public
+// --- 1. PUBLIC ROUTES ---
 router.get('/', productController.getProducts);
 router.get('/:id', productController.getProductById);
 
-// Admin - Thêm sản phẩm
+// --- 2. ADMIN ROUTES (Phải là Admin mới được làm) ---
+
+// A. THÊM SẢN PHẨM
 router.post(
   '/',
-  authMiddleware,
-  adminOnly,
+  authMiddleware, // Kiểm tra đăng nhập
+  adminOnly,      // Kiểm tra quyền Admin
   (req, res, next) => {
-    // Gọi middleware uploadCloud
     uploadCloud.array('images', 10)(req, res, function (err) {
       if (err) {
-        // NẾU CÓ LỖI Ở ĐÂY, NÓ SẼ HIỆN RA TERMINAL CỦA ÔNG
-        console.error('🔥 LỖI UPLOAD CLOUDINARY/MULTER:', err);
+        console.error(' LỖI UPLOAD KHI THÊM:', err);
         return res.status(500).json({ error: 'Lỗi upload ảnh: ' + err.message });
       }
-      // Nếu không lỗi thì mới chạy vào Controller
       next();
     });
   },
   productController.addProduct
 );
 
-// Admin - Cập nhật (Cũng dùng array)
+// B. CẬP NHẬT SẢN PHẨM
 router.put(
   '/:id',
   authMiddleware,
   adminOnly,
-  //upload.array('images', 10),
-  uploadCloud.array('images', 10), // Sử dụng middleware Cloudinary
+  (req, res, next) => {
+    uploadCloud.array('images', 10)(req, res, function (err) {
+      if (err) {
+        console.error('LỖI UPLOAD KHI SỬA:', err);
+        return res.status(500).json({ error: 'Lỗi upload ảnh: ' + err.message });
+      }
+      next();
+    });
+  },
   productController.updateProduct
 );
 
-// Admin - Xoá sản phẩm
+// C. XÓA SẢN PHẨM
 router.delete(
   '/:id',
   authMiddleware,

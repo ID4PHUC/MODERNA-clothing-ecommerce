@@ -16,7 +16,7 @@ exports.autoSeedUsers = async () => {
     const name = process.env.ADMIN_NAME || 'Super Admin';
 
     if (!email || !password) {
-      console.warn('⚠️ [Seed] Thiếu thông tin Admin trong .env, bỏ qua khởi tạo.');
+      console.warn(' [Seed] Thiếu thông tin Admin trong .env, bỏ qua khởi tạo.');
       return;
     }
 
@@ -57,34 +57,20 @@ exports.autoSeedUsers = async () => {
 // ================= 2. REGISTER =================
 exports.register = async (req, res) => {
   try {
-    // Lấy thêm các trường bảo mật từ req.body
     const { email, password, name, captchaAnswer, captchaCheck, address_confirm } = req.body;
 
-    // --- LỚP BẢO VỆ 1: HONEYPOT (BẪY BOT) ---
-    // Nếu trường 'address_confirm' có dữ liệu -> Chắc chắn là Bot điền ẩn
-    if (address_confirm && address_confirm.length > 0) {
-      console.warn(`[SECURITY ALERT] Phát hiện Bot đăng ký tại email: ${email}`);
-      return res.status(400).json({ error: 'Hành động bị từ chối do nghi ngờ robot!' });
-    }
+    if (address_confirm) return res.status(400).json({ error: 'Robot detected!' });
 
-    // --- LỚP BẢO VỆ 2: KIỂM TRA PHÉP TÍNH ---
-    // Kiểm tra xem người dùng có nhập đúng kết quả phép tính không
     if (!captchaAnswer || parseInt(captchaAnswer) !== parseInt(captchaCheck)) {
-      return res.status(400).json({ error: 'Xác nhận phép tính không chính xác. Vui lòng thử lại.' });
+      return res.status(400).json({ error: 'Captcha sai.' });
     }
 
-    // --- LOGIC ĐĂNG KÝ GỐC CỦA BẠN ---
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email và mật khẩu là bắt buộc' });
-    }
-
-    if (await User.findOne({ email })) {
-      return res.status(400).json({ error: 'Email đã được sử dụng' });
-    }
+    const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
+    if (existingUser) return res.status(400).json({ error: 'Email đã tồn tại.' });
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = new User({
-      email,
+      email: email.toLowerCase().trim(),
       name: name || '',
       passwordHash,
       isAdmin: false,
@@ -93,63 +79,59 @@ exports.register = async (req, res) => {
 
     await user.save();
     
+    // Tối ưu JWT Payload (Thêm role)
     const token = jwt.sign(
-      { id: user._id, email: user.email, isAdmin: user.isAdmin }, 
+      { id: user._id, email: user.email, isAdmin: user.isAdmin, role: 'user' }, 
       JWT_SECRET, 
       { expiresIn: '7d' }
     );
 
     res.json({ 
       token, 
-      user: { id: user._id, email: user.email, name: user.name,phone: user.phone,address: user.address, isAdmin: user.isAdmin } 
+      user: { id: user._id, email: user.email, name: user.name, isAdmin: user.isAdmin } 
     });
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 // ================= 3.Logic xử lý quen mk=================
 // --- HÀM 1: GỬI MAIL QUÊN MẬT KHẨU ---
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    if (!user) return res.status(404).json({ error: 'Không tìm thấy người dùng với email này.' });
+    if (!user) return res.status(404).json({ error: 'Email không tồn tại.' });
 
-    // Tạo mã token ngẫu nhiên và thời gian hết hạn (1 giờ)
-    const token = crypto.randomBytes(20).toString('hex');
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 3600000; 
+    //HASH TOKEN RESET TRƯỚC KHI LƯU VÀO DB
+    const rawToken = crypto.randomBytes(20).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 giờ
     await user.save();
 
-    // Cấu hình Nodemailer gửi bằng Gmail
+    // LINK RESET DÙNG BIẾN MÔI TRƯỜNG 
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+    const resetUrl = `${clientUrl}/reset-password.html?token=${rawToken}`;
+
     const transporter = nodemailer.createTransport({
       service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // Email của bạn trong .env
-        pass: process.env.EMAIL_PASS  // Mật khẩu ứng dụng trong .env
-      }
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
     });
-
-    // Link dẫn tới trang reset trên giao diện của bạn
-    const resetUrl = `http://localhost:3000/reset-password.html?token=${token}`;
 
     const mailOptions = {
       to: user.email,
-      subject: '[MODERNA] Yêu cầu đặt lại mật khẩu',
-      html: `<h3>Chào ${user.name || 'bạn'},</h3>
-             <p>Bạn nhận được email này vì đã yêu cầu đặt lại mật khẩu cho tài khoản Moderna.</p>
-             <p>Vui lòng nhấn vào link bên dưới để đặt mật khẩu mới (có hiệu lực trong 1 giờ):</p>
-             <a href="${resetUrl}" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">Đặt lại mật khẩu</a>
-             <p>Nếu bạn không yêu cầu, hãy bỏ qua email này.</p>`
+      subject: '[MODERNA] Reset Password',
+      html: `<h3>Yêu cầu đặt lại mật khẩu</h3>
+             <p>Vui lòng nhấn vào link: <a href="${resetUrl}">${resetUrl}</a></p>`
     };
 
     await transporter.sendMail(mailOptions);
-    res.json({ message: 'Email đặt lại mật khẩu đã được gửi thành công!' });
-
+    res.json({ message: 'Email đã gửi!' });
   } catch (err) {
-    res.status(500).json({ error: 'Lỗi gửi mail: ' + err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -158,23 +140,22 @@ exports.resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
 
-    // Tìm user có token khớp và chưa hết hạn
+    //Hash cái token người dùng gửi lên để so sánh với DB
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
     const user = await User.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: hashedToken,
       resetPasswordExpires: { $gt: Date.now() }
     });
 
-    if (!user) return res.status(400).json({ error: 'Mã xác thực không hợp lệ hoặc đã hết hạn.' });
+    if (!user) return res.status(400).json({ error: 'Token không hợp lệ hoặc hết hạn.' });
 
-    // Hash mật khẩu mới và xóa token
-    const salt = await bcrypt.genSalt(10);
-    user.passwordHash = await bcrypt.hash(newPassword, salt);
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
-    
     await user.save();
-    res.json({ message: 'Mật khẩu đã được cập nhật thành công!' });
 
+    res.json({ message: 'Mật khẩu đã đổi thành công!' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -186,21 +167,28 @@ exports.resetPassword = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    if (!user) return res.status(400).json({ error: 'Thông tin đăng nhập không chính xác' });
-
-    // KIỂM TRA TÀI KHOẢN CÓ ĐANG BỊ KHÓA KHÔNG
-    if (user.isActive === false) {
-      return res.status(403).json({ error: 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin gốc.' });
+    if (!user || user.isActive === false) {
+      return res.status(401).json({ error: 'Tài khoản không hợp lệ hoặc bị khóa.' });
     }
 
     const match = await bcrypt.compare(password, user.passwordHash);
-    if (!match) return res.status(400).json({ error: 'Thông tin đăng nhập không chính xác' });
+    if (!match) return res.status(400).json({ error: 'Sai mật khẩu.' });
 
-    const token = jwt.sign({ id: user._id, email: user.email, isAdmin: user.isAdmin }, JWT_SECRET, { expiresIn: '7d' });
+    // Tối ưu JWT Payload
+    const token = jwt.sign(
+      { 
+        id: user._id, 
+        email: user.email, 
+        isAdmin: user.isAdmin,
+        role: user.isAdmin ? 'admin' : 'user' 
+      }, 
+      JWT_SECRET, 
+      { expiresIn: '7d' }
+    );
 
-    res.json({ token, user: { id: user._id, email: user.email, name: user.name,phone: user.phone, address: user.address, isAdmin: user.isAdmin, role: user.isAdmin ? 'admin' : 'user' } });
+    res.json({ token, user: { id: user._id, email: user.email, isAdmin: user.isAdmin } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

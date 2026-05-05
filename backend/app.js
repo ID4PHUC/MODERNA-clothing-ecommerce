@@ -14,6 +14,7 @@ const chatRoutes = require('./routes/chatRoutes');
 
 
 const app = express();
+app.set('trust proxy', 1); // BẮT BUỘC để lấy đúng IP người dùng trên Vercel
 
 // ===== Middleware =====
 app.use(cors());
